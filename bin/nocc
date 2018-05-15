@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+
+import click
+from nocc import *
+
+
+def validate_tokens(context, option, value):
+    # remove all whitespaces
+    tokens_pairs = ''.join(value.split())
+
+    # split the comma separated list
+    tokens_pairs = tokens_pairs.split(',')
+
+    # properly format the list of tokens pairs
+    formated_token_list = []
+    for tokens_pair in tokens_pairs:
+        # split opening and closing token
+        tokens_pair = tokens_pairs[0].split('.')
+        if tokens_pair == '':
+            continue
+        if len(tokens_pair) < 2:
+            raise click.BadParameter("Please put a '.' to separate opening token and closing token.")
+        if len(tokens_pair) > 2:
+            raise click.BadParameter("Please add a ',' to separate list elements or remove duplicated '.'")
+        if tokens_pair[0] == '':
+            raise click.BadParameter("Please give an opening token.")
+        if tokens_pair[1] == '':
+            raise click.BadParameter("Please give a closing token.")
+        formated_token_list.append(tokens_pair)
+    return formated_token_list
+
+
+
+@click.command()
+@click.argument("filename")
+@click.option("--output", "-o",
+              default = None,
+              help = "Output file.")
+@click.option("--input-encoding", "-d",
+              default = None,
+              help = "Input file encoding.")
+@click.option("--output-encoding", "-e",
+              default = None,
+              help = "Output encoding to use.  [default: same as input file]")
+@click.option("--tokens", "-t", callback = validate_tokens,
+              default = "[.],(.)", show_default = True,
+              help = "A list of comma separated pairs of tokens used \
+                      to signal non dialog content.")
+@click.option("--lyrics-tokens", "-l", callback = validate_tokens,
+              default = "<i>♪.♪</i>", show_default = True,
+              help = "A list of comma separated pairs of tokens used \
+                      to signal non dialog content that can be spread \
+                      over multiple subtitles such as lyrics.")
+def cli(filename, output,
+        input_encoding, output_encoding,
+        tokens, lyrics_tokens):
+    subtitles, used_encoding = get_subtitles(filename, input_encoding)
+    clean_subtitles(subtitles, tokens, lyrics_tokens)
+    save_subtitles(subtitles,
+                             output, output_encoding,
+                             filename, used_encoding)
+
+
+if __name__ == "__main__":
+    cli()
