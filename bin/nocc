@@ -15,7 +15,7 @@ def validate_tokens(context, option, value):
     formated_token_list = []
     for tokens_pair in tokens_pairs:
         # split opening and closing token
-        tokens_pair = tokens_pairs[0].split('.')
+        tokens_pair = tokens_pair.split('.')
         if tokens_pair == '':
             continue
         if len(tokens_pair) < 2:
@@ -47,7 +47,7 @@ def validate_tokens(context, option, value):
               help = "A list of comma separated pairs of tokens used \
                       to signal non dialog content.")
 @click.option("--lyrics-tokens", "-l", callback = validate_tokens,
-              default = "<i>♪.♪</i>", show_default = True,
+              default = "<i>♪.♪</i>,♪.♪", show_default = True,
               help = "A list of comma separated pairs of tokens used \
                       to signal non dialog content that can be spread \
                       over multiple subtitles such as lyrics.")
