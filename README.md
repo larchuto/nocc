@@ -14,3 +14,4 @@ python setup.py install
     - click
     - pysrt
     - python-magic
+    - cchardet
