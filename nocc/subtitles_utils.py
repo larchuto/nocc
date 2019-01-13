@@ -9,7 +9,7 @@ def remove_non_dialog(subtitle_text, tokens):
         opening_token = re.escape(token_pair[0])
         closing_token = re.escape(token_pair[1])
 
-        hyphen_patern = "^\s?‐\s?(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
+        hyphen_patern = "^\s?[\-‐]\s?(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
                             .format(opening_token, closing_token)
         no_hyphen_patern = "(?:{})+(?:.|\n)*?(?:{})+\s*" \
                             .format(opening_token, closing_token)
@@ -37,7 +37,7 @@ def remove_lyrics(subtitle_text, lyrics_tokens_pair, start):
     return subtitle_text
 
 def clean_single_dialog(subtitle_text):
-    return re.sub("^\s?‐\s?(.*)\Z", "\g<1>", subtitle_text)
+    return re.sub("^\s?[\-‐]\s?(.*)\Z", "\g<1>", subtitle_text)
 
 def clean_newlines(subtitle_text):
     return re.sub("\r", '', subtitle_text)
