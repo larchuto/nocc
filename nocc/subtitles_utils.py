@@ -9,7 +9,7 @@ def remove_non_dialog(subtitle_text, tokens):
         opening_token = re.escape(token_pair[0])
         closing_token = re.escape(token_pair[1])
 
-        hyphen_patern = "^\s?[\-‐]\s?(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
+        hyphen_patern = "(?:^|\n)\s?[\-‐]\s?(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
                             .format(opening_token, closing_token)
         no_hyphen_patern = "(?:{})+(?:.|\n)*?(?:{})+\s*" \
                             .format(opening_token, closing_token)
