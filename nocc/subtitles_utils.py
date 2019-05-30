@@ -3,19 +3,20 @@ import re
 
 __all__ = ['clean_subtitles',]
 
-def remove_non_dialog(subtitle_text, tokens):
+def remove_non_dialog(subtitle_text, tokens, dialog_marker):
+    dialog_marker = re.escape(dialog_marker)
     for token_pair in tokens:
         # escaping special characters
         opening_token = re.escape(token_pair[0])
         closing_token = re.escape(token_pair[1])
 
-        hyphen_pattern = "(?:^|\n)\s?[\-‐]\s?(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
-                            .format(opening_token, closing_token)
-        no_hyphen_pattern = "(?:{})+(?:.|\n)*?(?:{})+\s*" \
-                            .format(opening_token, closing_token)
+        dialog_pattern = "(?:^|\n){}(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
+                          .format(dialog_marker, opening_token, closing_token)
+        no_dialog_pattern = "(?:{})+(?:.|\n)*?(?:{})+\s*" \
+                             .format(opening_token, closing_token)
 
-        subtitle_text = re.sub(hyphen_pattern, '', subtitle_text)
-        subtitle_text = re.sub(no_hyphen_pattern, '', subtitle_text)
+        subtitle_text = re.sub(dialog_pattern, '', subtitle_text)
+        subtitle_text = re.sub(no_dialog_pattern, '', subtitle_text)
 
     return subtitle_text
 
@@ -61,8 +62,10 @@ def clean_dialog_marker(subtitle_text,
     subtitle_text = re.sub(pattern, dialog_marker_to_use, subtitle_text)
     return subtitle_text
 
-def clean_single_dialog(subtitle_text):
-    return re.sub("^\s?[\-‐]\s?(.*)\Z", "\g<1>", subtitle_text)
+def clean_single_dialog(subtitle_text, dialog_marker):
+    dialog_marker = re.escape(dialog_marker)
+    pattern = "^{}(.*)\Z".format(dialog_marker)
+    return re.sub(pattern, "\g<1>", subtitle_text)
 
 def clean_newlines(subtitle_text):
     return re.sub("\r", '', subtitle_text)
@@ -76,7 +79,9 @@ def clean_subtitles(subtitles, tokens, lyrics_tokens):
         subtitle.text = clean_dialog_marker(subtitle.text,
                                             dialog_marker_list,
                                             dialog_marker)
-        subtitle.text = remove_non_dialog(subtitle.text, tokens + lyrics_tokens)
+        subtitle.text = remove_non_dialog(subtitle.text,
+                                          tokens + lyrics_tokens,
+                                          dialog_marker)
 
     for lyrics_tokens_pair in lyrics_tokens:
         start = True
@@ -88,7 +93,7 @@ def clean_subtitles(subtitles, tokens, lyrics_tokens):
 
     empty_subtitles = []
     for i, subtitle in enumerate(subtitles):
-        subtitle.text = clean_single_dialog(subtitle.text)
+        subtitle.text = clean_single_dialog(subtitle.text, dialog_marker)
         if len(subtitle.text) == 0:
             empty_subtitles.append(i)
 
