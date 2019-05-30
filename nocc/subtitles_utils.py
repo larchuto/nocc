@@ -1,4 +1,3 @@
-import re
 from .utils import remove_context_content, \
                    remove_character_names, \
                    remove_lyrics, \
@@ -8,8 +7,10 @@ from .utils import remove_context_content, \
 
 __all__ = ['clean_subtitles',]
 
-def normalize_newlines(subtitle_text):
-    return re.sub("\r", '', subtitle_text)
+
+def normalize_newlines(subtitles):
+    for subtitle in subtitles:
+        subtitle.text = '\n'.join(subtitle.text.splitlines())
 
 def delete_empty_subtitles(subtitles, dialog_marker):
     empty_subtitles = []
@@ -22,11 +23,10 @@ def delete_empty_subtitles(subtitles, dialog_marker):
 
 
 def clean_subtitles(subtitles, tokens, lyrics_tokens, character_name_regex):
+    normalize_newlines(subtitles)
+
     dialog_marker_list = ["‐", "-", "—"]
     dialog_marker = detect_dialog_marker(subtitles, dialog_marker_list)
-    for subtitle in subtitles:
-        subtitle.text = normalize_newlines(subtitle.text)
-
     uniformize_dialog_marker(subtitles, dialog_marker_list, dialog_marker)
 
     remove_context_content(subtitles, tokens + lyrics_tokens, dialog_marker)
@@ -36,6 +36,5 @@ def clean_subtitles(subtitles, tokens, lyrics_tokens, character_name_regex):
     cleanup_single_dialog_marker(subtitles, dialog_marker)
     delete_empty_subtitles(subtitles, dialog_marker)
 
-    # clean stuff a bit
     subtitles.sort()
     subtitles.clean_indexes()
