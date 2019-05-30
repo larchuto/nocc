@@ -4,7 +4,7 @@ setup(
     name='nocc',
     version='0.1.0',
     license='GPL-3.0',
-    packages=['nocc'],
+    packages=['nocc', 'nocc.filters'],
     scripts=['bin/nocc'],
     description='Remove Deaf & Hard of Hearing content in str subtitles',
     install_requires=[
