@@ -61,7 +61,7 @@ def validate_regex(context, option, value):
                       to signal non dialog content that can be spread \
                       over multiple subtitles such as lyrics.")
 @click.option("--character-name-regex", "-n", callback = validate_regex,
-              default = "[A-Z]+(\s[A-Z]*)?(\s[0-9]+)?:\s?", show_default = True,
+              default = "([A-Z]+(\s|\-|‐|‑)?)+([0-9]+)?\s?:\s?", show_default = True,
               help = "A regex representing format used for characters' names.")
 def cli(filename, output,
         input_encoding, output_encoding,
