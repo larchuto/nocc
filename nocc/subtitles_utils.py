@@ -3,7 +3,7 @@ import re
 
 __all__ = ['clean_subtitles',]
 
-def remove_non_dialog(subtitle_text, tokens, dialog_marker):
+def remove_context_content(subtitle_text, tokens, dialog_marker):
     dialog_marker = re.escape(dialog_marker)
     for token_pair in tokens:
         # escaping special characters
@@ -79,9 +79,9 @@ def clean_subtitles(subtitles, tokens, lyrics_tokens):
         subtitle.text = clean_dialog_marker(subtitle.text,
                                             dialog_marker_list,
                                             dialog_marker)
-        subtitle.text = remove_non_dialog(subtitle.text,
-                                          tokens + lyrics_tokens,
-                                          dialog_marker)
+        subtitle.text = remove_context_content(subtitle.text,
+                                               tokens + lyrics_tokens,
+                                               dialog_marker)
 
     for lyrics_tokens_pair in lyrics_tokens:
         start = True
