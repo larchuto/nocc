@@ -9,13 +9,13 @@ def remove_non_dialog(subtitle_text, tokens):
         opening_token = re.escape(token_pair[0])
         closing_token = re.escape(token_pair[1])
 
-        hyphen_patern = "(?:^|\n)\s?[\-‐]\s?(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
+        hyphen_pattern = "(?:^|\n)\s?[\-‐]\s?(?:{})+(?:.|\n)*?(?:{})+\s*(?:\n|\Z)" \
                             .format(opening_token, closing_token)
-        no_hyphen_patern = "(?:{})+(?:.|\n)*?(?:{})+\s*" \
+        no_hyphen_pattern = "(?:{})+(?:.|\n)*?(?:{})+\s*" \
                             .format(opening_token, closing_token)
 
-        subtitle_text = re.sub(hyphen_patern, '', subtitle_text)
-        subtitle_text = re.sub(no_hyphen_patern, '', subtitle_text)
+        subtitle_text = re.sub(hyphen_pattern, '', subtitle_text)
+        subtitle_text = re.sub(no_hyphen_pattern, '', subtitle_text)
 
     return subtitle_text
 
