@@ -20,6 +20,16 @@ def remove_context_content(subtitle_text, tokens, dialog_marker):
 
     return subtitle_text
 
+def remove_character_names(subtitle_text, character_name_regex, dialog_marker):
+    top_pattern = "^{}(\n|\Z)".format(character_name_regex)
+    dialog_pattern = "(?m)^({})?{}".format(re.escape(dialog_marker),
+                                           character_name_regex)
+
+    subtitle_text = re.sub(top_pattern, '', subtitle_text)
+    subtitle_text = re.sub(dialog_pattern, dialog_marker, subtitle_text)
+
+    return subtitle_text
+
 def remove_lyrics(subtitle_text, lyrics_tokens_pair, start):
     if start:
         remove_lyrics.in_lyrics = False
@@ -64,14 +74,17 @@ def clean_dialog_marker(subtitle_text,
 
 def clean_single_dialog(subtitle_text, dialog_marker):
     dialog_marker = re.escape(dialog_marker)
-    pattern = "^{}(.*)\Z".format(dialog_marker)
-    return re.sub(pattern, "\g<1>", subtitle_text)
+    pattern = "(?m)^{}".format(dialog_marker)
+    if len(re.findall(pattern, subtitle_text)) == 1:
+        pattern = "{}(.*)".format(pattern)
+        subtitle_text = re.sub(pattern, "\g<1>", subtitle_text)
+    return subtitle_text
 
 def clean_newlines(subtitle_text):
     return re.sub("\r", '', subtitle_text)
 
 
-def clean_subtitles(subtitles, tokens, lyrics_tokens):
+def clean_subtitles(subtitles, tokens, lyrics_tokens, character_name_regex):
     dialog_marker_list = ["‐", "-", "—"]
     dialog_marker = detect_dialog_marker(subtitles, dialog_marker_list)
     for subtitle in subtitles:
@@ -81,6 +94,9 @@ def clean_subtitles(subtitles, tokens, lyrics_tokens):
                                             dialog_marker)
         subtitle.text = remove_context_content(subtitle.text,
                                                tokens + lyrics_tokens,
+                                               dialog_marker)
+        subtitle.text = remove_character_names(subtitle.text,
+                                               character_name_regex,
                                                dialog_marker)
 
     for lyrics_tokens_pair in lyrics_tokens:

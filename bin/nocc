@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import click
+import re
 from nocc import *
 
 
@@ -29,6 +30,14 @@ def validate_tokens(context, option, value):
         formated_token_list.append(tokens_pair)
     return formated_token_list
 
+def validate_regex(context, option, value):
+    try:
+        re.compile(value)
+    except re.error as e:
+        raise click.BadParameter("Invalid regex: {}".format(str(e)))
+    return value
+
+
 
 
 @click.command()
@@ -51,11 +60,14 @@ def validate_tokens(context, option, value):
               help = "A list of comma separated pairs of tokens used \
                       to signal non dialog content that can be spread \
                       over multiple subtitles such as lyrics.")
+@click.option("--character-name-regex", "-n", callback = validate_regex,
+              default = "[A-Z]+(\s[A-Z]*)?(\s[0-9]+)?:\s?", show_default = True,
+              help = "A regex representing format used for characters' names.")
 def cli(filename, output,
         input_encoding, output_encoding,
-        tokens, lyrics_tokens):
+        tokens, lyrics_tokens, character_name_regex):
     subtitles, used_encoding = get_subtitles(filename, input_encoding)
-    clean_subtitles(subtitles, tokens, lyrics_tokens)
+    clean_subtitles(subtitles, tokens, lyrics_tokens, character_name_regex)
     save_subtitles(subtitles,
                              output, output_encoding,
                              filename, used_encoding)
