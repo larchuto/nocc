@@ -1,6 +1,7 @@
 import re
+from .tools import remove_pattern_from_subtitles
 
-def remove_context_content_from_text(subtitle_text, tokens, dialog_marker):
+def remove_context_content(subtitles, tokens, dialog_marker):
     dialog_marker = re.escape(dialog_marker)
     for token_pair in tokens:
         # escaping special characters
@@ -12,13 +13,5 @@ def remove_context_content_from_text(subtitle_text, tokens, dialog_marker):
         no_dialog_pattern = "(?:{})+(?:.|\n)*?(?:{})+\s*" \
                              .format(opening_token, closing_token)
 
-        subtitle_text = re.sub(dialog_pattern, '', subtitle_text)
-        subtitle_text = re.sub(no_dialog_pattern, '', subtitle_text)
-
-    return subtitle_text
-
-def remove_context_content(subtitles, tokens, dialog_marker):
-    for subtitle in subtitles:
-        subtitle.text = remove_context_content_from_text(subtitle.text,
-                                                         tokens,
-                                                         dialog_marker)
+        remove_pattern_from_subtitles(dialog_pattern, subtitles)
+        remove_pattern_from_subtitles(no_dialog_pattern, subtitles)

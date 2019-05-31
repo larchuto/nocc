@@ -1,4 +1,5 @@
 import re
+from .tools import substitute_pattern_from_subtitles
 
 def detect_dialog_marker(subtitles, dialog_marker_candidates):
     candidate_count = {}
@@ -22,8 +23,7 @@ def uniformize_dialog_marker(subtitles,
                              dialog_marker_to_use):
     markers = re.escape(''.join(possible_dialog_markers))
     pattern = "(?m)^[{}]\s?".format(markers)
-    for subtitle in subtitles:
-        subtitle.text = re.sub(pattern, dialog_marker_to_use, subtitle.text)
+    substitute_pattern_from_subtitles(pattern, dialog_marker_to_use, subtitles)
 
 
 def cleanup_single_dialog_marker(subtitles, dialog_marker):
