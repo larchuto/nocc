@@ -66,7 +66,7 @@ def validate_regex(context, option, value):
 def cli(filename, output,
         input_encoding, output_encoding,
         tokens, lyrics_tokens, character_name_regex):
-    subtitles, used_encoding = get_subtitles(filename, input_encoding)
+    subtitles, used_encoding = load_subtitles(filename, input_encoding)
     clean_subtitles(subtitles, tokens, lyrics_tokens, character_name_regex)
     save_subtitles(subtitles,
                              output, output_encoding,

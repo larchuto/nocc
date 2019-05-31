@@ -3,7 +3,7 @@ import pysrt
 import cchardet as chardet
 
 
-def get_subtitles(filename, file_encoding):
+def load_subtitles(filename, file_encoding):
     if file_encoding == None:
         content = open(filename, "rb").read()
         file_encoding = chardet.detect(content)['encoding']
